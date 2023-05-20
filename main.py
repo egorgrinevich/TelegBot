@@ -18,26 +18,36 @@ def start(message):
                                            f"Пожалуйста, укажите свой статус:", reply_markup=markup)
 
 
-@bot.message_handler(content_types=['text'])
-def get_text_messages(message):
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    if call.data:
+        if call.data == 'student':
+            status = "student"
+            #bot.send_message(chat_id=call.message.chat.id, text=f"Опишите, пожалуйста, проблему:", reply_markup=markup)
+            markup = types.InlineKeyboardMarkup() #создание новых кнопок
+            btn1 = types.InlineKeyboardButton("Не получается войти в систему (неверный логин или пароль)", callback_data="ans_1")
+            btn2 = types.InlineKeyboardButton("Я не знаю свои логин и пароль", callback_data="ans_2")
+            btn3 = types.InlineKeyboardButton("Я восстановился (перевелся из другого университета)", callback_data="ans_3")
+            btn4 = types.InlineKeyboardButton("Я не вижу нужного  электронногогого курса, где бы я выполнял задания и участвовал в видеоконференциях", callback_data="ans_4")
+            btn5 = types.InlineKeyboardButton("Я забыл пароль", callback_data="ans_5")
+            btn6 = types.InlineKeyboardButton("Моей проблемы нет в списке", callback_data="ans_6")
+            markup.add(btn1)
+            markup.add(btn2)
+            markup.add(btn3)
+            markup.add(btn4)
+            markup.add(btn5)
+            markup.add(btn6)
+            bot.send_message(chat_id=call.message.chat.id, text=f"Опишите, пожалуйста, проблему:", reply_markup=markup)
+        elif call.data == 'ans_1':
+            markup = types.InlineKeyboardMarkup() #resize_keyboard=True)  # создание новых кнопок
+            btn1 = types.InlineKeyboardButton("elearning.bseu.by", callback_data="ans_1")
+            btn2 = types.InlineKeyboardButton("i.bseu.by", callback_data="ans_2")
+            markup.add(btn1)
+            markup.add(btn2)
+            bot.send_message(chat_id=call.message.chat.id, text=f"Какой адрес прописан? в адресной строке?", reply_markup=markup)
 
-    if message.text == '👋 Поздороваться':
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True) #создание новых кнопок
-        btn1 = types.KeyboardButton('Как стать автором на Хабре?')
-        btn2 = types.KeyboardButton('Правила сайта')
-        btn3 = types.KeyboardButton('Советы по оформлению публикации')
-        markup.add(btn1, btn2, btn3)
-        bot.send_message(message.from_user.id, '❓ Задайте интересующий вас вопрос', reply_markup=markup) #ответ бота
 
 
-    elif message.text == 'Как стать автором на Хабре?':
-        bot.send_message(message.from_user.id, 'Вы пишете первый пост, его проверяют модераторы, и, если всё хорошо, отправляют в основную ленту Хабра, где он набирает просмотры, комментарии и рейтинг. В дальнейшем премодерация уже не понадобится. Если с постом что-то не так, вас попросят его доработать.\n \nПолный текст можно прочитать по ' + '[ссылке](https://habr.com/ru/sandbox/start/)', parse_mode='Markdown')
-
-    elif message.text == 'Правила сайта':
-        bot.send_message(message.from_user.id, 'Прочитать правила сайта вы можете по ' + '[ссылке](https://habr.com/ru/docs/help/rules/)', parse_mode='Markdown')
-
-    elif message.text == 'Советы по оформлению публикации':
-        bot.send_message(message.from_user.id, 'Подробно про советы по оформлению публикаций прочитать по ' + '[ссылке](https://habr.com/ru/docs/companies/design/)', parse_mode='Markdown')
 
 
 bot.polling(none_stop=True, interval=0)
